@@ -3,6 +3,7 @@ package com.eventos.api.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.eventos.api.domain.event.Event;
 import com.eventos.api.domain.event.EventRequestDTO;
+import com.eventos.api.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class EventService {
     private String bucketName;
     @Autowired
     private AmazonS3 s3Client;
+    @Autowired
+    private EventRepository repository;
     public Event createEvent (EventRequestDTO data){
         String imgUrl = null;
         if(data.image() != null){
@@ -32,6 +35,8 @@ public class EventService {
         newEvent.setEventUrl(data.eventUrl());
         newEvent.setDate(new Date(data.date()));
         newEvent.setImgUrl(imgUrl);
+        newEvent.setRemote(data.remote());
+        repository.save(newEvent);
         return newEvent;
     }
     private String uploadImg(MultipartFile multipartFile){
@@ -43,7 +48,7 @@ public class EventService {
             return s3Client.getUrl(bucketName, filename).toString();
         } catch (Exception e) {
             System.out.println("Erro ao realizar upload do arquivo.");
-            return null;
+            return "";
         }
     }
     private File convertMultipartToFile(MultipartFile multipartFile) throws IOException {
