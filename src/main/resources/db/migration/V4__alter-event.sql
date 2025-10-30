@@ -1,0 +1,1 @@
+ALTER TABLE event ADD event_url VARCHAR (100) NOT NULL;

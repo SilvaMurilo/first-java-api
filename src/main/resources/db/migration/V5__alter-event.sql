@@ -1,0 +1,3 @@
+ALTER TABLE event DROP COLUMN img_url;
+DELETE FROM event;
+ALTER TABLE event ADD img_url VARCHAR (255) NOT NULL;
